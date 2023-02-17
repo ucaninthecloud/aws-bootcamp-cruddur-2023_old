@@ -17,4 +17,5 @@ Created 2 Budgets:
 
 ![Alt text](assets/2023-02-14-Logical_Design_Cruddr.png "Conceptual Design")
 
-`One of the interesting things was to edit the `
+`One of the interesting things I needed to tweak a little bit was the Momento logo. Andrew showed how he was editing this via Visual Studio Code and removed a couple of tags. I ended up changing the fill from none to black on the first line as well as removing the fill="currentColor"> for both path tags. I added the momento_logo_origina.svg and momento_logo.svg within the assets directory`
+
