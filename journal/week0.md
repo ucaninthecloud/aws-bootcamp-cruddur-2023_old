@@ -42,10 +42,21 @@ I added the momento_logo_original.svg and momento_logo.svg within the assets dir
 
 9. Added my credentials to the current session using the following environment variables:
 
+```
 export AWS_ACCESS_KEY_ID=""
 export AWS_SECRET_ACCESS_KEY=""
 export AWS_DEFAULT_REGION=us-east-1
+```
 
-10. I did not made them persistent 
+10. I did not made them persistent as I wasn't sure (yet) about Gitpod security. I need to dig more about this.
 
-11. 
+11. I just realized Gitpod only provides 500 hrs of compute so I am stopping my updates to the journal from there and I am using Visual Studio Code locally on my own device. (I will create an article next week about the setup from the beginning)
+
+
+## Homework challenges
+
+12. It might not be a large one but I added the billing policy to the IAM user (already shared the account)
+
+13. Created the Eventbridge rule to AWS health.
+
+14. I have an old AWS account so I created an Organization from that one and invited my bootcamp account. I am researching more information about billing to the main organization account.
