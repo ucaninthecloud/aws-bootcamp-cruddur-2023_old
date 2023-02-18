@@ -60,3 +60,5 @@ export AWS_DEFAULT_REGION=us-east-1
 13. Created the Eventbridge rule to AWS health.
 
 14. I have an old AWS account so I created an Organization from that one and invited my bootcamp account. I am researching more information about billing to the main organization account.
+
+15. I am not going to use the Organization as I identified that **For AWS Organizations, the AWS Free Tier eligibility for all member accounts begins on the day that the management account is created.** from [AWS billing free Tier](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-free-tier.html).
