@@ -8,7 +8,7 @@
         },
         "Subscribers": [
             {
-                "Address": "myemail@myowndomain.com",
+                "Address": "fakeemail@cloud.site",
                 "SubscriptionType": "EMAIL"
             }
         ]

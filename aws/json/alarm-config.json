@@ -3,7 +3,7 @@
     "AlarmDescription": "Your account is going over $10.00 USD",
     "ActionsEnabled": true,
     "AlarmActions": [
-        "arn:aws:sns:us-east-1:3390XXXXXXXX:Billing Alarm"
+        "arn:aws:sns:us-east-1:339047XXXXXX:Billing Alarm"
     ],
     "EvaluationPeriods": 1,
     "DatapointsToAlarm": 1,
