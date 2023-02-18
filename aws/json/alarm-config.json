@@ -1,0 +1,35 @@
+{
+    "AlarmName": "DailyEstimatedCharges",
+    "AlarmDescription": "Your account is going over $10.00 USD",
+    "ActionsEnabled": true,
+    "AlarmActions": [
+        "arn:aws:sns:us-east-1:3390XXXXXXXX:Billing Alarm"
+    ],
+    "EvaluationPeriods": 1,
+    "DatapointsToAlarm": 1,
+    "Threshold": 1,
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "TreatMissingData": "breaching",
+    "Metrics": [{
+        "Id": "m1",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "AWS/Billing",
+                "MetricName": "EstimatedCharges",
+                "Dimensions": [{
+                    "Name": "Currency",
+                    "Value": "USD"
+                }]
+            },
+            "Period": 21600,
+            "Stat": "Maximum"
+        },
+        "ReturnData": false
+    },
+    {
+        "Id": "e1",
+        "Expression": "IF(RATE(m1)>10,RATE(m1)*21600,0)",
+        "Label": "DailyEstimatedCharges",
+        "ReturnData": true
+    }]
+  }
