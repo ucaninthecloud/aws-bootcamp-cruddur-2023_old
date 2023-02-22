@@ -26,3 +26,5 @@ unset FRONTEND_URL
 unset BACKEND_URL
 docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-flask
 ```
+
+Using OpenAPI has helped me understand better how I am using my current scripts to GET data from my On-premises infrastructure
