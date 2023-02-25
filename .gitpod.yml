@@ -17,7 +17,7 @@ tasks:
       sudo apt install -y postgresql-client-13 libpq-dev
   - name: npm front-end
     init: |
-      cd /workspace/aws-bootcamp-cruddr-2023/frontend-react-js
+      cd ./frontend-react-js
       npm install
 vscode:
   extensions:
