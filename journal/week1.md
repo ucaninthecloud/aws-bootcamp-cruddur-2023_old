@@ -32,8 +32,26 @@ I stopped and deleted the Workspace and tried once more. It was failing with a d
 
 I tried to capture the error by trying again with the complete path but it worked this time. One of those strange gitpod "glitches".
 
+After the composer finished, I was able to see all 4 services started and open them to the public:
+
+![Alt Text](assets/2023-02-28-Docker_Ports.png "Open Dockert ports")
+
+The docker images are:
+
+![Alt Text](assets/2023-02-28-Docker_Images.png "Available Images")
+
+And the site loads without errors:
+
+<img src="assets/2023-02-28-Docker_Frontend.png" width="70%">
 
 
+Curl returns a good response as well:
+
+<img src="assets/2023-02-28-Curl_Application.png" width="70%">
+
+Verified how the mounts are attached to the containers and updated the backend-flask/services/home_activities.py to show the following message:
+
+<img src="assets/2023-02-28-Mount_Changes.png" width="70%">
 
 Below is the code that I submited a PR for. I tried to submit early in the week but I missed a couple steps after my fork was created.
 
@@ -49,8 +67,6 @@ docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-
 ```
 
 For some reason, I still don't trust Gitpod 100% to store my AWS secret access key so, I created a new _reference directory in my repo to place all my *pre-requisites*
-
-
 
 After this, compose up will serve the app in Port 3000 without running npm install every time I need to destroy and recreate the workspace.
 
