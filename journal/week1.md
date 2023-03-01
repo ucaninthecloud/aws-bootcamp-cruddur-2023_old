@@ -30,6 +30,10 @@ I stopped and deleted the Workspace and tried once more. It was failing with a d
       npm install
 ```
 
+I tried to capture the error by trying again with the complete path but it worked this time. One of those strange gitpod "glitches".
+
+
+
 
 Below is the code that I submited a PR for. I tried to submit early in the week but I missed a couple steps after my fork was created.
 
