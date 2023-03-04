@@ -75,7 +75,15 @@ As part of the backend configuration, I created the Notifications endpoint and a
 <img src="assets/2023-02-28-Notifications.png">
 
 
-The last piece was to setup DynamoDB
+The last piece was to setup DynamoDB. This exercice is going to download a local copy of AWS DynamoDB for development. As I don't use the local credential manager (Gitpod), I needed to declare my AccessKey
+
+```
+export AWS_ACCESS_KEY_ID=""
+export AWS_SECRET_ACCESS_KEY=""
+export AWS_DEFAULT_REGION=us-east-1
+```
+
+
 
 ## Challenges ##
 
@@ -87,14 +95,9 @@ Added to the backend-flask Docker file the installation of "ps" to stop processe
 RUN apt-get update && apt-get install -y procps
 ```
 
-Also added the following lines for the docker-compose healthcheck.
+Also added the following lines to the frontend Dockerfile healthcheck.
 ```
-    healthcheck:
-      #test: curl 
-      test: ["CMD", "curl", "-X", "GET", "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/api/activities/notifications"]
-      interval: 10s
-      timeout: 2s
-      retries: 3
+HEALTHCHECK CMD curl --fail http://localhost:3000 || exit 1
 ```
 
 ## My Journey to the Cloud!
