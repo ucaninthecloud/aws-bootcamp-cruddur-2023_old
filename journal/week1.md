@@ -83,11 +83,25 @@ export AWS_SECRET_ACCESS_KEY=""
 export AWS_DEFAULT_REGION=us-east-1
 ```
 
+I configured the Dynamodb container configuration in Docker and restarted the Gitpod workspace. Once everything was rebuilt, I set once more my Access Key and verified there was no Table crested yet using: 
 
+```
+aws dynamodb list-tables --endpoint-url http://localhost:8000
+```
+
+<img src=assets\2023-02-28-NoTable.png>
+
+Copied the 100 Days of Cloud code to create a sample Table:
+
+<img src=assets\2023-02-28-SampleTable.png>
+
+And now the list-tables command shows an output
+
+<img src=assets\2023-02-28-MusicTable.png>
+
+I also updated my docker-compose.yml to include the PostgreSQL when deploying the Gitpod environment.
 
 ## Challenges ##
-
-
 
 Added to the backend-flask Docker file the installation of "ps" to stop processes within the container.
 
