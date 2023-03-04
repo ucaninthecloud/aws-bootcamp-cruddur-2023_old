@@ -53,7 +53,7 @@ Verified how the mounts are attached to the containers and updated the backend-f
 
 <img src="assets/2023-02-28-Mount_Changes.png" width="70%">
 
-Below is the code that I submited a PR for. I tried to submit early in the week but I missed a couple steps after my fork was created.
+While I was following along, I submitted a PR for week 1. I tried to submit early in the week but I missed a couple steps after my fork was created.
 
 ```sh
 docker run --rm -p 4567:4567 -it backend-flask
@@ -66,9 +66,36 @@ unset BACKEND_URL
 docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-flask
 ```
 
-For some reason, I still don't trust Gitpod 100% to store my AWS secret access key so, I created a new _reference directory in my repo to place all my *pre-requisites*
+Basically to update the order and to remove the "equal sign" to unset.
 
-After this, compose up will serve the app in Port 3000 without running npm install every time I need to destroy and recreate the workspace.
+For some reason, I still don't trust Gitpod 100% to store my AWS secret access key so I also created a new _reference directory in my repo to place all my *pre-requisites*
+
+As part of the backend configuration, I created the Notifications endpoint and added one static entry:
+
+<img src="assets/2023-02-28-Notifications.png">
+
+
+The last piece was to setup DynamoDB
+
+## Challenges ##
+
+
+
+Added to the backend-flask Docker file the installation of "ps" to stop processes within the container.
+
+```sh
+RUN apt-get update && apt-get install -y procps
+```
+
+Also added the following lines for the docker-compose healthcheck.
+```
+    healthcheck:
+      #test: curl 
+      test: ["CMD", "curl", "-X", "GET", "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/api/activities/notifications"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+```
 
 ## My Journey to the Cloud!
 
