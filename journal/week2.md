@@ -25,7 +25,9 @@ gp env HONEYCOMB_API_KEY="MySuperSecretKey"
 
 I then closed my whole workspace and re-launched it. After composing up one more time, it started to send data right away!
 
-Added one new span and two fields on that new span.
+Added one new span and two fields on that new span. I called them ucloud:
+
+<img src="assets/week2/2023-03-02-Trace.png">
 
 Just for documentation and to remember later, https://honeycomb-whoami.glitch.me can be used to determine the environment for a specific key.
 
