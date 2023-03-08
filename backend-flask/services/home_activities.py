@@ -1,4 +1,4 @@
-import requests
+from flask import request
 from datetime import datetime, timedelta, timezone
 from opentelemetry import trace
 
@@ -52,4 +52,6 @@ class HomeActivities:
       }
       ]
       span.set_attribute("ucloud.result_length", len(results))
+      ip_address = request.remote_addr
+      span.set_attribute("ucloud.ip", str(ip_address))
       return results

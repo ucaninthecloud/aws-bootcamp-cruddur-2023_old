@@ -33,4 +33,20 @@ Just for documentation and to remember later, https://honeycomb-whoami.glitch.me
 
 https://docs.honeycomb.io/getting-data-in/opentelemetry/python/
 
-Need to configure the app to send observability data
+
+
+**Challenge homework**
+
+I added another instrumentation to the app, it is the remote ip_address. It is not working as expected so I will investigate a little bit further on it.
+
+In order for it to work, I added ```from flask import request``` at the beginning of the home_activities.py file and at the bottom the following:
+
+```python
+      ip_address = request.remote_addr
+      span.set_attribute("ucloud.ip", str(ip_address))
+```
+
+This results in the following in Honeycomb:
+
+<img src="assets/week2/2023-03-02-Trace02.png">
+
