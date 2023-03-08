@@ -1,3 +1,4 @@
+import requests
 from datetime import datetime, timedelta, timezone
 from opentelemetry import trace
 
@@ -9,6 +10,8 @@ class HomeActivities:
       span = trace.get_current_span()
       now = datetime.now(timezone.utc).astimezone()
       span.set_attribute("ucloud.now", now.isoformat())
+      ip_address = request.remote_addr
+      span.set_attributes("ucloud.ip",str(ip_address))
       results = [{
         'uuid': '68f126b0-1ceb-4a33-88be-d90fa7109eee',
         'handle':  'Carl Sagan',
