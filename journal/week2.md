@@ -116,6 +116,15 @@ xray_url = os.getenv("AWS_XRAY_URL")
 xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
 ```
 
+10. Attempted a compose up but it wasn't sending data to AWS. I realized I needed to save the AWS keys as variables to gitpod. I configured them as gitpod exports and stop the current workspace. When the new workspace was reloaded, and docker was brought up, I was able to get segments in the console:
+
+<img src= assets/week2/2023-03-12-xRay01.png>
+
+Segment information:
+
+<img src= assets/week2/2023-03-12-xRay02.png>
+
+
 
 
 **Challenge homework**
