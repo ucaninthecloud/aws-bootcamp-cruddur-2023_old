@@ -34,6 +34,89 @@ Just for documentation and to remember later, https://honeycomb-whoami.glitch.me
 https://docs.honeycomb.io/getting-data-in/opentelemetry/python/
 
 
+**AWS X-Ray***
+
+1. I added the below line to the requirements.txt, so that it can be loaded when starting the container
+
+```bash
+aws-xray-sdk
+```
+
+2. As I wanted to continue sending data to Honeycomb, I just added two lines to the environment section for the backend-flask service in the docker-compose.yml:
+
+```yml
+      AWS_XRAY_URL: "*4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}*"
+      AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
+```
+
+3. A new service container was also added to the same docker-compose.yml to start the xray-daemon.
+
+```yml
+  xray-daemon:
+    image: "amazon/aws-xray-daemon"
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "us-east-1"
+    command:
+      - "xray -o -b xray-daemon:2000"
+    ports:
+      - 2000:2000/udp
+```
+
+4. At this point I realized I needed to use the AWS cli to create a new XRAY group and set my running session environment variables with the data I had in my [gitpod_vars](../_reference/gitpod_vars) file.
+
+5. Once they were set, the Cruddur group was created:
+
+```bash
+aws xray create-group \
+--group-name "Cruddur" \
+--filter-expression "service(\"backend-flask\")"
+```
+
+6. As mentioned via the instructions, I created a sampling rule and saved it as [xray.json](../aws/json/xray.json)
+
+```json
+{
+  "SamplingRule": {
+      "RuleName": "Cruddur",
+      "ResourceARN": "*",
+      "Priority": 9000,
+      "FixedRate": 0.1,
+      "ReservoirSize": 5,
+      "ServiceName": "backend-flask",
+      "ServiceType": "*",
+      "Host": "*",
+      "HTTPMethod": "*",
+      "URLPath": "*",
+      "Version": 1
+  }
+}
+```
+
+7. After this, I "saved" or pushed this sampling rule to AWS via the following command:
+
+```bash
+aws xray create-sampling-rule --cli-input-json file://aws/json/xray.json
+```
+
+8. The last thing was to set X-Ray in the app.py. First I added the modules:
+
+```python
+# X-Ray 
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+```
+
+9. And configured the recorder:
+
+```python
+# XRay recorder 
+xray_url = os.getenv("AWS_XRAY_URL")
+xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+```
+
+
 
 **Challenge homework**
 
