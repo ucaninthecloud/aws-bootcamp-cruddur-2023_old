@@ -126,7 +126,8 @@ Segment information:
 
 <img src= assets/week2/2023-03-12-xRay02.png>
 
-##AWS Cloudwatch
+
+## AWS Cloudwatch
 
 1. The first thing is to add the watchtower to [requirements.txt](../backend-flask/requirements.txt) so the python library will be installed for that container.
 
@@ -185,6 +186,59 @@ class HomeActivities:
 def data_home():
   data = HomeActivities.run(logger=LOGGER)
 ```
+
+7. After some time, the logs appeared within the CloudWatch > Log groups > cruddur
+
+<img src=assets/week2/2023-03-15-CloudWatch.png>
+
+## Cost considerations
+
+To reduce spend during the testing, we can comment all Cloudwatch logs as well as X-Ray. 
+
+- [home_activities](../backend-flask/services/home_activities.py)
+```py
+class HomeActivities:
+  def run():
+    #logger.info("home activities")
+    with tracer.start_as_current_span("home-activities-mock-data"):
+```
+
+- [app.py](../backend-flask/app.py)
+
+```py
+# XRay recorder 
+# xray_url = os.getenv("AWS_XRAY_URL")
+# xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+
+# Configuring Logger to Use CloudWatch
+# LOGGER = logging.getLogger(__name__)
+# LOGGER.setLevel(logging.DEBUG)
+# console_handler = logging.StreamHandler()
+# cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+# LOGGER.addHandler(console_handler)
+# LOGGER.addHandler(cw_handler)
+# LOGGER.info("Testing the log for /api/activities/home")
+
+...
+
+# XRayMiddleware(app, xray_recorder)
+
+...
+
+#@app.after_request
+#def after_request(response):
+#    timestamp = strftime('[%Y-%b-%d %H:%M]')
+#    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+#    return response
+
+...
+
+@app.route("/api/activities/home", methods=['GET'])
+def data_home():
+  data = HomeActivities.run()
+```
+
+
 
 
 
