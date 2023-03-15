@@ -169,6 +169,24 @@ def after_request(response):
     AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
 ```
 
+6. I encountered the same error because the LOGGER variable was not defined. The following lines were edited
+
+>- [home_activities](../backend-flask/services/home_activities.py)
+```py
+class HomeActivities:
+  def run(logger):
+    logger.info("home activities")
+```
+
+>- [app.py](../backend-flask/app.py)
+
+```py
+@app.route("/api/activities/home", methods=['GET'])
+def data_home():
+  data = HomeActivities.run(logger=LOGGER)
+```
+
+
 
 
 ##Challenge homework
