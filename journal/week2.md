@@ -1,5 +1,7 @@
 # Week 2 — Distributed Tracing
 
+## Honeycomb
+
 The first thing I did for week 2 was to update my ../reference/gitpod_vars file by adding the Honeycomb variables
 
 ```bash
@@ -34,7 +36,7 @@ Just for documentation and to remember later, https://honeycomb-whoami.glitch.me
 https://docs.honeycomb.io/getting-data-in/opentelemetry/python/
 
 
-**AWS X-Ray***
+## AWS X-Ray
 
 1. I added the below line to the requirements.txt, so that it can be loaded when starting the container
 
@@ -124,10 +126,52 @@ Segment information:
 
 <img src= assets/week2/2023-03-12-xRay02.png>
 
+##AWS Cloudwatch
+
+1. The first thing is to add the watchtower to [requirements.txt](../backend-flask/requirements.txt) so the python library will be installed for that container.
+
+2. pip install -r requirements.txt within the backend-flask folder will install watchtower and the rest of components. 
+
+3. Updated the app.py file to import watchtower and logging as well as to initiate the logger
+
+```py
+import watchtower
+import logging
+from time import strftime
+```
+
+```py
+# Configuring Logger to Use CloudWatch
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
+console_handler = logging.StreamHandler()
+cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+LOGGER.addHandler(console_handler)
+LOGGER.addHandler(cw_handler)
+LOGGER.info("Testing the log for /api/activities/home")
+```
+
+4. Later I updated the [home_activities.py](../backend-flask/app.py) with the function required "after_request"
+
+```py
+@app.after_request
+def after_request(response):
+    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    return response
+```
+
+5. The last piece before attempting for the first time was to set the AWS variables on the [docker-compose.yml](../docker-compose.yml)
+
+```yml
+    AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
+    AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+    AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+```
 
 
 
-**Challenge homework**
+##Challenge homework
 
 I added another instrumentation to the app, it is the remote ip_address. It is not working as expected so I will investigate a little bit further on it.
 
