@@ -262,8 +262,55 @@ gp env ROLLBAR_ACCESS_TOKEN="hex-rollbar-access-token"
 
 <br>
 
-3. 
+3. As well as setting it on [docker-compose.yml](../docker-compose.yml)
 
+ROLLBAR_ACCESS_TOKEN: "${ROLLBAR_ACCESS_TOKEN}"
+
+4. To instrument rollbar, it first need to be defined in the [app.py](../backend-flask/app.py)
+
+```py
+import os
+import rollbar
+import rollbar.contrib.flask
+from flask import got_request_exception
+```
+
+> The following code goes after the app is defined:
+
+```py
+rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+@app.before_first_request
+def init_rollbar():
+    """init rollbar module"""
+    rollbar.init(
+        # access token
+        rollbar_access_token,
+        # environment name
+        'production',
+        # server root directory, makes tracebacks prettier
+        root=os.path.dirname(os.path.realpath(__file__)),
+        # flask already sets up logging
+        allow_logging_basic_config=False)
+
+    # send exceptions from `app` to rollbar, using flask's signal system.
+    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+```
+
+> As well as defining a new endpoint:
+
+```py
+@app.route('/rollbar/test')
+def rollbar_test():
+    rollbar.report_message('Hello World!', 'warning')
+    return "Hello World!"
+```
+5. The docker compose up brought all containers and below is a screenshot with what Rollbar reported:
+
+<img src="assets/week2/2023-03-17-Rollbar02.png">
+
+
+<br>
+<br>
 
 ## Challenge homework
 
