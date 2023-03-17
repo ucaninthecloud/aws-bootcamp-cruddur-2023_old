@@ -126,6 +126,7 @@ Segment information:
 
 <img src= assets/week2/2023-03-12-xRay02.png>
 
+<br>
 
 ## AWS Cloudwatch
 
@@ -191,7 +192,9 @@ def data_home():
 
 <img src=assets/week2/2023-03-15-CloudWatch.png>
 
-## Cost considerations
+<br>
+
+### Cost considerations
 
 To reduce spend during the testing, we can comment all Cloudwatch logs as well as X-Ray. 
 
@@ -238,12 +241,31 @@ def data_home():
   data = HomeActivities.run()
 ```
 
+## Rollbar
+
+1. The first thing is to set blinker and rollbar in the [requirements.txt](../backend-flask/requirements.txt) file so these components are installed during the docker compose.
+
+```
+blinker
+rollbar
+```
+
+2. Using Gitpod, you want to set the variables for every new workspace. This can be achieved with either:
+
+```
+gp env ROLLBAR_ACCESS_TOKEN="hex-rollbar-access-token"
+```
+
+> Or by setting a new variable manually on Gitpod.io > User Settings > Variables
+
+<img src="assets/week2/2023-03-17-Rollbar.png">
+
+<br>
+
+3. 
 
 
-
-
-
-##Challenge homework
+## Challenge homework
 
 I added another instrumentation to the app, it is the remote ip_address. It is not working as expected so I will investigate a little bit further on it.
 
