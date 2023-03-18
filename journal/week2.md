@@ -360,7 +360,7 @@ def rollbar_test():
       REACT_APP_BACKEND_URL: "https://${CODESPACE_NAME}-4567.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
 ```
 
-4. After that, I tried to rebuild the Codespace and it loaded with only one issue, the ports are not opened by default. This is something that is still not possible with Github Codespaces so I just set the ports to be forwarded:
+4. After that, I tried to rebuild the Codespace and it loaded with only one issue, the ports are not opened by default. This is something that is still not possible (https://github.com/community/community/discussions/10394) with Github Codespaces so I just set the ports to be forwarded:
 
 <img src="assets/week2/2023-03-17-Codespaces02.png">
 
