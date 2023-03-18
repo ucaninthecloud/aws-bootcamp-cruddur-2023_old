@@ -367,6 +367,17 @@ def rollbar_test():
 <br>
 <br>
 
+## XRay Subsegmenting
+
+After following the video, I was able to fix the closing of subsegmenting on the [user_activities.py](../backend-flask/services/user_activities.py).
+
+XRay updated the segments correctly now:
+
+<img src="assets/week2/2023-03-17-xRaySubsegmenting.png">
+
+
+<br>
+
 ## Challenge homework
 
 I added another instrumentation to the app, it is the remote ip_address. It is not working as expected so I will investigate a little bit further on it.
