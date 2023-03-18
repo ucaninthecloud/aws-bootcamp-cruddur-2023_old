@@ -314,6 +314,59 @@ def rollbar_test():
 
 ## Github Codespaces
 
+1. Created a .devcontainer directory in root and a devcontainer.json file. The contents are:
+
+```json
+{
+	"name": "Configuration for Github spaces with Cruddur",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	"features": {
+		"ghcr.io/devcontainers/features/aws-cli:1": {}
+	},
+	"remoteEnv": {
+		"AWS_CLI_AUTO_PROMPT": "on-partial"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"ms-python.python"
+			],
+			"settings": {
+				"workbench.colorTheme": "Default Dark+"
+			}
+		}
+	}
+}
+```
+
+2. I logged in to Github.com and went to **Settings** > **Code, planning, and automation** > **Codespaces** and added three "secrets"
+
+<img src="assets/week2/2023-03-17-Codespaces01.png">
+
+3. Updated the [docker-compose.yml](../docker-compose.yml) file to include the correct GitHub Codespaces variables for the backend-flask
+
+```yml
+      FRONTEND_URL: "https://${CODESPACE_NAME}-3000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
+      BACKEND_URL: "https://${CODESPACE_NAME}-4567.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
+      AWS_XRAY_URL: "*${CODESPACE_NAME}-4567.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}*"
+```
+
+> And for the frontend-flask-react
+
+```yml
+      REACT_APP_BACKEND_URL: "https://${CODESPACE_NAME}-4567.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
+```
+
+4. After that, I tried to rebuild the Codespace and it loaded with only one issue, the ports are not opened by default. This is something that is still not possible with Github Codespaces so I just set the ports to be forwarded:
+
+<img src="assets/week2/2023-03-17-Codespaces02.png">
+
+<br>
+<br>
+
 ## Challenge homework
 
 I added another instrumentation to the app, it is the remote ip_address. It is not working as expected so I will investigate a little bit further on it.
