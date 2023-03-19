@@ -19,6 +19,7 @@ tasks:
     init: |
       cd ./frontend-react-js
       npm install
+      npm i aws-amplify --save
 vscode:
   extensions:
     - 42Crunch.vscode-openapi
