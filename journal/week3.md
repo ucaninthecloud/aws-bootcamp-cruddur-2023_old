@@ -55,5 +55,53 @@
 
 ## AWS Amplify
 
-In order to use Cognito, we need to use the AWS Amplify Javascript library
+In order to use Cognito, we need to use the AWS Amplify Javascript library. This needs to be installed on the frontend-react-js directory (Similar to the standard **npm install**).
+
+1. I added the installation to the [.gitpod.yml](../.gitpod.yml)
+
+```yml
+  - name: npm front-end
+    init: |
+      cd ./frontend-react-js
+      npm install
+      npm i aws-amplify --save
+```
+
+2. Edited the [App.js](../frontend-react-js/src/App.js) by adding the import statement:
+
+```js
+import { Amplify } from 'aws-amplify';
+```
+
+3. Added the Amplify configuration block after the last import statement:
+
+```js
+Amplify.configure({
+  "AWS_PROJECT_REGION": process.env.REACT_APP_AWS_PROJECT_REGION,
+  "aws_cognito_identity_pool_id": process.env.REACT_APP_AWS_COGNITO_IDENTITY_POOL_ID,
+  "aws_cognito_region": process.env.REACT_APP_AWS_COGNITO_REGION,
+  "aws_user_pools_id": process.env.REACT_APP_AWS_USER_POOLS_ID,
+  "aws_user_pools_web_client_id": process.env.REACT_APP_CLIENT_ID,
+  "oauth": {},
+  Auth: {
+    region: process.env.REACT_APP_AWS_PROJECT_REGION, //fixed this line to include _APP before _AWS
+    userPoolId: process.env.REACT_APP_AWS_USER_POOLS_ID,
+    userPoolWebClientId: process.env.REACT_APP_AWS_USER_POOLS_WEB_CLIENT_ID,
+  }
+});
+```
+
+4. From the above code, the REACT Environment variables were declared in the [docker-compose.yml](../docker-compose.yml) and also within Gitpod:
+
+```yml
+REACT_APP_AWS_PROJECT_REGION: "${AWS_DEFAULT_REGION}"
+REACT_APP_AWS_COGNITO_REGION: "${AWS_DEFAULT_REGION}"
+REACT_APP_AWS_USER_POOLS_ID: "${AWS_USER_POOLS_ID}"
+REACT_APP_CLIENT_ID: "${APP_CLIENT_ID}"
+```
+
+<img src=assets/week3/2023-03-19-Gitpod_Variables.png width="70%">
+
+<br>
+
 ##
