@@ -104,4 +104,69 @@ REACT_APP_CLIENT_ID: "${APP_CLIENT_ID}"
 
 <br>
 
+5. Udpated the [HomeFeedpage.js](../frontend-react-js/src/pages/HomeFeedPage.js) by adding the amplify import statement.
+
+```js
+import { Auth } from 'aws-amplify';
+```
+
+6. Replaced the previous checkAuth constant with:
+
+```js
+const checkAuth = async () => {
+  Auth.currentAuthenticatedUser({
+    // Optional, By default is false. 
+    // If set to true, this call will send a 
+    // request to Cognito to get the latest user data
+    bypassCache: false 
+  })
+  .then((user) => {
+    console.log('user',user);
+    return Auth.currentAuthenticatedUser()
+  }).then((cognito_user) => {
+      setUser({
+        display_name: cognito_user.attributes.name,
+        handle: cognito_user.attributes.preferred_username
+      })
+  })
+  .catch((err) => console.log(err));
+};
+```
+
+7. Replace **import Cookies from 'js-cookie'** within the [ProfileInfo.js](../frontend-react-js/src/components/ProfileInfo.js) with the following import
+
+```js
+import { Auth } from 'aws-amplify';
+```
+
+8. Because the cookies were removed, the **Cookies** need to be replaced in the rest of the code:
+
+> Old
+```js
+  const signOut = async () => {
+    console.log('signOut')
+    // [TODO] Authenication
+    Cookies.remove('user.logged_in')
+    //Cookies.remove('user.name')
+    //Cookies.remove('user.username')
+    //Cookies.remove('user.email')
+    //Cookies.remove('user.password')
+    //Cookies.remove('user.confirmation_code')
+    window.location.href = "/"
+  }
+```
+
+> New
+```js
+const signOut = async () => {
+  try {
+      await Auth.signOut({ global: true });
+      window.location.href = "/"
+  } catch (error) {
+      console.log('error signing out: ', error);
+  }
+}
+```
+
+
 ##
