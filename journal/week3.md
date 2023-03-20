@@ -86,7 +86,7 @@ Amplify.configure({
   Auth: {
     region: process.env.REACT_APP_AWS_PROJECT_REGION, //fixed this line to include _APP before _AWS
     userPoolId: process.env.REACT_APP_AWS_USER_POOLS_ID,
-    userPoolWebClientId: process.env.REACT_APP_AWS_USER_POOLS_WEB_CLIENT_ID,
+    userPoolWebClientId: process.env.REACT_APP_CLIENT_ID,
   }
 });
 ```
