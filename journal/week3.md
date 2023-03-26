@@ -397,8 +397,37 @@ const onsubmit = async (event) => {
 }
 ```
 
+## Recover Page
+
+1. The following is an update to the [RecoverPage.js](../frontend-react-js/src/pages/RecoverPage.js) sp we can get a temp password
 
 
+> Old
+```js
+  const onsubmit_send_code = async (event) => {
+    event.preventDefault();
+    console.log('onsubmit_send_code')
+    return false
+  }
+  const onsubmit_confirm_code = async (event) => {
+    event.preventDefault();
+    console.log('onsubmit_confirm_code')
+    return false
+  }
+```
+
+```js
+
+```
+
+> New
+```js
+import { Auth } from 'aws-amplify';
+```
+
+```js
+
+```
 
 > Old
 ```js
