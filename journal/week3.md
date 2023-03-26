@@ -64,7 +64,7 @@ In order to use Cognito, we need to use the AWS Amplify Javascript library. This
     init: |
       cd ./frontend-react-js
       npm install
-      npm i aws-amplify --save
+      npm i aws-amplify
 ```
 
 2. Edited the [App.js](../frontend-react-js/src/App.js) by adding the import statement:
@@ -168,5 +168,252 @@ const signOut = async () => {
 }
 ```
 
+## Sign-in Page
 
-##
+1. Modify the [SigninPage.js](../frontend-react-js/src/pages/SigninPage.js) by replacing the cookes import with the AWS-amplify import statement and a couple constants:
+
+> Old
+```js
+import Cookies from 'js-cookie';
+```
+
+```js
+  const onsubmit = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    console.log('onsubmit')
+    if (Cookies.get('user.email') === email && Cookies.get('user.password') === password){
+      Cookies.set('user.logged_in', true)
+      window.location.href = "/"
+    } else {
+      setErrors("Email and password is incorrect or account doesn't exist")
+    }
+    return false
+  }
+```
+
+> New
+```js
+import { Auth } from 'aws-amplify';
+```
+
+```js
+const onsubmit = async (event) => {
+  setErrors('')
+  event.preventDefault();
+  try {
+    Auth.signIn(email, password)
+      .then(user => {
+        localStorage.setItem("access_token", user.signInUserSession.accessToken.jwtToken)
+        window.location.href = "/"
+      })
+      .catch(err => { console.log('Error!', err) });
+  } catch (error) {
+    if (error.code == 'UserNotConfirmedException') {
+      window.location.href = "/confirm"
+    }
+    setErrors(error.message)
+  }
+  return false
+}
+```
+
+2. Modify the [Profile.js](../frontend-react-js/src/components/ProfileInfo.js) to also use aws-amplify and the method:
+
+> Old
+```js
+import Cookies from 'js-cookie';
+```
+
+```js
+  const signOut = async () => {
+    console.log('signOut')
+    // [TODO] Authenication
+    Cookies.remove('user.logged_in')
+    //Cookies.remove('user.name')
+    //Cookies.remove('user.username')
+    //Cookies.remove('user.email')
+    //Cookies.remove('user.password')
+    //Cookies.remove('user.confirmation_code')
+    window.location.href = "/"
+  }
+```
+
+> New
+```js
+import { Auth } from 'aws-amplify';
+```
+
+```js
+  const signOut = async () => {
+    try {
+        await Auth.signOut({ global: true });
+        window.location.href = "/"
+    } catch (error) {
+        console.log('error signing out: ', error);
+    }
+  }
+```
+
+3. Commited the code to Github and triggered Gitpod.io workspace. (I prefer to keep updating the code in my local VSCode and then testing in Gitpod to reduce my usage)
+
+4. After a couple attempts, this worked. I spent several days with an issue because I missed to update the application Client Id variable because I deleted and created a new user pool. 
+
+<img src="assets/week3/2023-03-26-Authentication.png">
+
+<br>
+
+
+
+## Custom Signup
+
+1. Update the [SignupPage.js](../frontend-react-js/src/pages/SignupPage.js) to remove cookies and the onsubmit function
+
+> Old
+```js
+import Cookies from 'js-cookie';
+```
+
+```js
+  const onsubmit = async (event) => {
+    event.preventDefault();
+    console.log('SignupPage.onsubmit')
+    // [TODO] Authenication
+    Cookies.set('user.name', name)
+    Cookies.set('user.username', username)
+    Cookies.set('user.email', email)
+    Cookies.set('user.password', password)
+    Cookies.set('user.confirmation_code',1234)
+    window.location.href = `/confirm?email=${email}`
+    return false
+  }
+```
+
+> New
+```js
+import { Auth } from 'aws-amplify';
+```
+
+```js
+const onsubmit = async (event) => {
+  event.preventDefault();
+  setErrors('')
+  try {
+    const { user } = await Auth.signUp({
+      username: email,
+      password: password,
+      attributes: {
+        name: name,
+        email: email,
+        preferred_username: username,
+      },
+      autoSignIn: { // optional - enables auto sign in after user is confirmed
+        enabled: true,
+      }
+      });
+      console.log(user);
+      window.location.href = `/confirm?email=${email}`
+  } catch (error) {
+    console.log(error);
+    setErrors(error.message)
+  }
+  return false
+}
+```
+
+2. 
+
+
+
+
+> Old
+```js
+import Cookies from 'js-cookie'
+```
+
+```js
+  const resend_code = async (event) => {
+    console.log('resend_code')
+    // [TODO] Authenication
+  }
+
+  const onsubmit = async (event) => {
+    event.preventDefault();
+    console.log('ConfirmationPage.onsubmit')
+    // [TODO] Authenication
+    if (Cookies.get('user.email') === undefined || Cookies.get('user.email') === '' || Cookies.get('user.email') === null){
+      setErrors("You need to provide an email in order to send Resend Activiation Code")   
+    } else {
+      if (Cookies.get('user.email') === email){
+        if (Cookies.get('user.confirmation_code') === code){
+          Cookies.set('user.logged_in',true)
+          window.location.href = "/"
+        } else {
+          setErrors("Code is not valid")
+        }
+      } else {
+        setErrors("Email is invalid or cannot be found.")   
+      }
+    }
+    return false
+  }
+```
+
+> New
+```js
+import { Auth } from 'aws-amplify'; 
+```
+
+```js
+const resend_code = async (event) => {
+  setErrors('')
+  try {
+    await Auth.resendSignUp(email);
+    console.log('code resent successfully');
+    setCodeSent(true)
+  } catch (err) {
+    // does not return a code
+    // does cognito always return english
+    // for this to be an okay match?
+    console.log(err)
+    if (err.message == 'Username cannot be empty'){
+      setErrors("You need to provide an email in order to send Resend Activiation Code")   
+    } else if (err.message == "Username/client id combination not found."){
+      setErrors("Email is invalid or cannot be found.")   
+    }
+  }
+}
+
+const onsubmit = async (event) => {
+  event.preventDefault();
+  setErrors('')
+  try {
+    await Auth.confirmSignUp(email, code);
+    window.location.href = "/"
+  } catch (error) {
+    setErrors(error.message)
+  }
+  return false
+}
+```
+
+
+
+
+> Old
+```js
+
+```
+
+```js
+
+```
+
+> New
+```js
+
+```
+
+```js
+
+```
