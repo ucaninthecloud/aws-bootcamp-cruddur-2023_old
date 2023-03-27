@@ -416,18 +416,89 @@ const onsubmit = async (event) => {
   }
 ```
 
-```js
-
-```
-
 > New
 ```js
 import { Auth } from 'aws-amplify';
 ```
 
 ```js
-
+  const onsubmit_send_code = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    Auth.forgotPassword(username)
+    .then((data) => setFormState('confirm_code') )
+    .catch((err) => setErrors(err.message) );
+    return false
+  }
+  const onsubmit_confirm_code = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    if (password == passwordAgain){
+      Auth.forgotPasswordSubmit(username, code, password)
+      .then((data) => setFormState('success'))
+      .catch((err) => setErrors(err.message) );
+    } else {
+      setErrors('Passwords do not match')
+    }
+    return false
+  }
 ```
+
+## Server side security
+
+1. Create the headers within the [HomeFeedPage.js](../frontend-react-js/src/pages/HomeFeedPage.js) for the api/activities/home endpoint
+
+```js
+headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        },
+```
+
+2. Also include a print to the Authorization header in the [app.py](../backend-flask/app.py) for the backend:
+
+> Old
+```py
+@app.route("/api/activities/home", methods=['GET'])
+@xray_recorder.capture('activities_home')
+def data_home():
+  data = HomeActivities.run(logger=LOGGER)
+  return data, 200
+```
+
+```py
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  expose_headers="location,link",
+  allow_headers="content-type,if-modified-since",
+  methods="OPTIONS,GET,HEAD,POST"
+)
+```
+
+
+> New
+```py
+@app.route("/api/activities/home", methods=['GET'])
+@xray_recorder.capture('activities_home')
+def data_home():
+  app.logger.debug("AUTH HEADER----")
+  app.logger.debug(
+     request.headers.get('Authorization')
+  )
+  data = HomeActivities.run(logger=LOGGER)
+  return data, 200
+```
+
+```py
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
+  methods="OPTIONS,GET,HEAD,POST"
+)
+```
+
 
 > Old
 ```js

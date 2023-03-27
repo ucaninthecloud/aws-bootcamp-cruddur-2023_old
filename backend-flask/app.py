@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
 import os
+import sys
 from services.home_activities import *
 from services.notifications_activities import *
 from services.user_activities import *
@@ -75,8 +76,8 @@ origins = [frontend, backend]
 cors = CORS(
   app, 
   resources={r"/api/*": {"origins": origins}},
-  expose_headers="location,link",
-  allow_headers="content-type,if-modified-since",
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
   methods="OPTIONS,GET,HEAD,POST"
 )
 # Rollbar
@@ -147,6 +148,10 @@ def data_create_message():
 @app.route("/api/activities/home", methods=['GET'])
 @xray_recorder.capture('activities_home')
 def data_home():
+  app.logger.debug("AUTH HEADER----")
+  app.logger.debug(
+     request.headers.get('Authorization')
+  )
   data = HomeActivities.run(logger=LOGGER)
   return data, 200
 
