@@ -14,6 +14,8 @@ from services.messages import *
 from services.create_message import *
 from services.show_activity import *
 
+from lib.cognito_token_verification import CognitoJwtToken, extract_access_token, TokenVerifyError
+
 # X-Ray 
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
@@ -61,6 +63,12 @@ LOGGER.addHandler(cw_handler)
 LOGGER.info("Testing the log for /api/activities/home")
 
 app = Flask(__name__)
+
+cognito_token_verification = CognitoJwtToken(
+  user_pool_id = os.getenv("AWS_USER_POOLS_ID"), 
+  user_pool_client_id = os.getenv("APP_CLIENT_ID"), 
+  region = os.getenv("AWS_DEFAULT_REGION")
+)
 
 XRayMiddleware(app, xray_recorder)
 
@@ -148,11 +156,22 @@ def data_create_message():
 @app.route("/api/activities/home", methods=['GET'])
 @xray_recorder.capture('activities_home')
 def data_home():
-  app.logger.debug("AUTH HEADER----")
-  app.logger.debug(
-     request.headers.get('Authorization')
-  )
+  #app.logger.debug("AUTH HEADER----")
+  #app.logger.debug(
+  #   request.headers.get('Authorization')
+  #)
+    access_token = CognitoJwtToken.extract_access_token(request.headers)
+    try:
+      claims = cognito_token_verification.token_service.verify(access_token)
+    except TokenVerifyError as e:
+      _ = request.data
+      abort(make_response(jsonify(message=str(e)), 401))
+
+  claims = cognito_token_verification.claims
+  app.logger.debug('claims')
+  app.logger.debug(claims)
   data = HomeActivities.run(logger=LOGGER)
+  
   return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
