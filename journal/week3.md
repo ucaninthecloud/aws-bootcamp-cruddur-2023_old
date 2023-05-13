@@ -499,6 +499,38 @@ cors = CORS(
 )
 ```
 
+All of the above 
+
+## Verify Token
+
+1. An external library was used as reference [Flask-AWSCognito](https://github.com/cgauge/Flask-AWSCognito).
+
+2. This needs the Flask-AWSCognito to be installed and it was added as a prerequisite for the backend-flask component.
+
+3. Following the documentation, a new file was created [cognito_token_verification.py](../backend-flask/lib/cognito_token_verification.py). This includes all the requirements for the service to verify the token.
+
+4. Updated the [app.py](../backend-flask/app.py) to import some functions
+
+```py
+from lib.cognito_token_verification import CognitoTokenVerification, extract_access_token, TokenVerifyError
+
+#### --- After app = Flask(__name__)
+
+cognito_token_verification = CognitoTokenVerification(
+  user_pool_id = os.getenv("AWS_USER_POOLS_ID"), 
+  user_pool_client_id = os.getenv("APP_CLIENT_ID"), 
+  region = os.getenv("AWS_DEFAULT_REGION")
+)
+```
+
+5. The docker-compose.yml file was updated to include 2 required variables
+
+```yml
+      AWS_COGNITO_USER_POOLS_ID: "${AWS_USER_POOLS_ID}"
+      AWS_COGNITO_CLIENT_ID: "${APP_CLIENT_ID}"
+```
+
+6. 
 
 > Old
 ```js
