@@ -21,7 +21,8 @@
 				"workbench.colorTheme": "Default Dark+"
 			}
 		}
-	}
+	},
+	"postCreateCommand": "bash postcreate.sh"
 	
 
 
